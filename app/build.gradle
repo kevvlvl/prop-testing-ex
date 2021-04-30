@@ -1,0 +1,61 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(15)
+    }
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'prop.testing.ex1.App'
+}
+
+ext.versionJunitJupiter = '5.7.1'
+ext.versionJqwik = '1.5.1'
+
+dependencies {
+
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: "${versionJunitJupiter}"
+
+    // https://mvnrepository.com/artifact/net.jqwik/jqwik
+    testImplementation group: 'net.jqwik', name: 'jqwik', version: "${versionJqwik}"
+
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.19.0'
+
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: "${versionJunitJupiter}"
+
+//    // This dependency is used by the application.
+//    implementation 'com.google.guava:guava:30.0-jre'
+}
+
+tasks.named('test') {
+
+    useJUnitPlatform {
+        includeEngines 'jqwik'
+
+        // Or include several Junit engines if you use them
+        // includeEngines 'jqwik', 'junit-jupiter', 'junit-vintage'
+
+        // includeTags 'fast', 'medium'
+        // excludeTags 'slow'
+    }
+
+    include '**/*Properties.class'
+    include '**/*Test.class'
+    include '**/*Tests.class'
+}
+
+tasks.named('compileTestJava') {
+    // To enable argument names in reporting and debugging
+    options.compilerArgs += '-parameters'
+}
